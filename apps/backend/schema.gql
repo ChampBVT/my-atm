@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type InquiryNamespace {
+  balance: Float!
+}
+
+type Query {
+  viewer: Viewer!
+}
+
+type Viewer {
+  inquiry: InquiryNamespace!
+}
