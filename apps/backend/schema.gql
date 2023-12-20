@@ -2,14 +2,57 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type InquiryNamespace {
+type Account {
   balance: Float!
+}
+
+union AccountPayload = Account | InvalidPinError
+
+type InquiryNamespace {
+  account(pin: String!): AccountPayload!
+}
+
+type InsufficientNoteError implements UserError {
+  code: String!
+  message: String!
+}
+
+type InvalidPinError implements UserError {
+  code: String!
+  message: String!
+}
+
+type InvalidWithdrawAmountError implements UserError {
+  code: String!
+  message: String!
+}
+
+type Mutation {
+  withdraw(amount: Float!, pin: String!): WithdrawPayload!
+}
+
+type OverdrawnError implements UserError {
+  code: String!
+  message: String!
 }
 
 type Query {
   viewer: Viewer!
 }
 
+interface UserError {
+  code: String!
+  message: String!
+}
+
 type Viewer {
   inquiry: InquiryNamespace!
+}
+
+union WithdrawPayload = InsufficientNoteError | InvalidPinError | InvalidWithdrawAmountError | OverdrawnError | WithdrawSuccess
+
+type WithdrawSuccess {
+  fiveNotes: Float!
+  tenNotes: Float!
+  twentyNotes: Float!
 }
