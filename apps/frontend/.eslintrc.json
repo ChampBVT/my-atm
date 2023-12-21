@@ -1,6 +1,7 @@
 {
-  "extends": ["next/babel", "next/core-web-vitals"],
+  "extends": ["next/core-web-vitals"],
   "rules": {
-    "@next/next/no-html-link-for-pages": ["error", "apps/frontend/src/pages"]
+    "@next/next/no-html-link-for-pages": ["error", "apps/frontend/src/pages"],
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
   }
 }

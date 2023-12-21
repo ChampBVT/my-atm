@@ -1,4 +1,18 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "cSpell.words": ["datasource", "screencloud", "tailwindcss", "typeorm"]
+  "cSpell.words": [
+    "datasource",
+    "dotlottie",
+    "headlessui",
+    "lotties",
+    "nextjs",
+    "screencloud",
+    "tailwindcss",
+    "toastify",
+    "typeorm"
+  ],
+  "eslint.workingDirectories": [
+    { "pattern": "apps/*/" },
+    { "pattern": "packages/*/" }
+  ]
 }
