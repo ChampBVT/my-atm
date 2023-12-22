@@ -1,6 +1,7 @@
 import { join } from 'path';
 import { DataSourceOptions, LogLevel, LoggerOptions } from 'typeorm';
 import 'dotenv/config';
+import { SeederOptions } from 'typeorm-extension';
 
 const loggingLevel = (): LoggerOptions => {
   const level = (process.env.DB_LOG_LEVEL || '').trim();
@@ -14,7 +15,7 @@ const loggingLevel = (): LoggerOptions => {
   }
 };
 
-export default <DataSourceOptions>{
+export default <DataSourceOptions & SeederOptions>{
   type: 'postgres',
   host: process.env.DB_HOST,
   port: Number.parseInt(process.env.DB_PORT || ''),
@@ -27,4 +28,6 @@ export default <DataSourceOptions>{
   entities: [join(__dirname, 'src/**/*.entity.{js,ts}')],
   migrations: [join(__dirname, 'migrations/**/*.{js,ts}')],
   logging: loggingLevel(),
+  seeds: [join(__dirname, 'seeds/**/*.seeder.{js,ts}')],
+  factories: [join(__dirname, 'seeds/**/*.factories.{js,ts}')],
 };

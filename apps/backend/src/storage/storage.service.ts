@@ -1,5 +1,4 @@
-import { UserInputError } from '@nestjs/apollo';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { StorageEntity } from 'src/storage/storage.entity';
 import { StorageRepository } from 'src/storage/storage.repository';
 
@@ -8,10 +7,10 @@ export class StorageService {
   constructor(private readonly storageRepository: StorageRepository) {}
 
   async getCurrentStorage(): Promise<StorageEntity> {
-    const storageEntity = await this.storageRepository.findOneBy({});
+    const storageEntity = await this.storageRepository.getCurrent();
 
     if (!storageEntity) {
-      throw new UserInputError('Storage not found');
+      throw new InternalServerErrorException('Storage not found');
     }
 
     return storageEntity;

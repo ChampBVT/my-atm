@@ -1,10 +1,9 @@
-import { UserInputError } from '@nestjs/apollo';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import { Account } from 'src/account/model/account.model';
 import { AccountRepository } from 'src/account/account.repository';
 import { ScreenCloudService } from 'src/common/external/screencloud/screencloud.service';
-import { AccountPayload } from 'src/account/account-payload.union';
+import { AccountPayload } from 'src/account/model/account-payload.union';
 import { InvalidPinError } from 'src/common/error/invalid-pin-error.model';
 
 @Injectable()
@@ -21,10 +20,10 @@ export class AccountService {
       return new InvalidPinError('Invalid or missing pin');
     }
 
-    const accountEntity = await this.accountRepository.findOneBy({});
+    const accountEntity = await this.accountRepository.getCurrentBalance();
 
     if (!accountEntity) {
-      throw new UserInputError('No balance found');
+      throw new InternalServerErrorException('No balance found');
     }
 
     return Account.from(accountEntity);

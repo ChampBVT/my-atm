@@ -1,5 +1,5 @@
 import { Args, ResolveField, Resolver } from '@nestjs/graphql';
-import { AccountPayload } from 'src/account/account-payload.union';
+import { AccountPayload } from 'src/account/model/account-payload.union';
 import { AccountService } from 'src/account/account.service';
 import { InquiryAccountInput } from 'src/inquiry/input/inquiry-account.input';
 import { InquiryNamespace } from 'src/viewer/model/inquiry-namespace.model';

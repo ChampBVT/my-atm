@@ -15,10 +15,19 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:unit:ci": "pnpm test:unit --ci --colors",
+    "test:unit:cov": "pnpm test:unit --coverage",
+    "test:unit:watch": "pnpm test:unit --watch",
+    "test:unit": "pnpm run test --config ./jest.unit.config.js",
+    "test:e2e:ci": "pnpm test:e2e --ci --colors",
+    "test:e2e:cov": "pnpm test:e2e --coverage",
+    "test:e2e:full": "pnpm typeorm:db:e2e:drop && pnpm typeorm:db:e2e:create && pnpm test:e2e:cov",
+    "test:e2e:watch": "pnpm test:e2e --watch",
+    "test:e2e": "cross-env ENV=e2e pnpm run test --config ./jest.e2e.config.js",
+    "typeorm:db:e2e:create": "dotenv -- cross-var cross-env ENV=e2e ts-node -r tsconfig-paths/register --project ./tsconfig.json ./node_modules/typeorm-extension/bin/cli.cjs -d ./datasource-cli.ts db:create --initialDatabase %DB_DATABASE%",
+    "typeorm:db:e2e:drop": "dotenv -- cross-var cross-env ENV=e2e ts-node -r tsconfig-paths/register --project ./tsconfig.json ./node_modules/typeorm-extension/bin/cli.cjs -d ./datasource-cli.ts db:drop --initialDatabase %DB_DATABASE%",
+    "seed:e2e": "cross-env ENV=e2e pnpm seed",
+    "seed": "ts-node -r tsconfig-paths/register --project ./tsconfig.json ./node_modules/typeorm-extension/bin/cli.cjs seed:run -d ./datasource-cli.ts",
     "typeorm:migration:run": "typeorm-ts-node-commonjs migration:run -d ./datasource-cli.ts",
     "typeorm:migration:revert": "typeorm-ts-node-commonjs migration:revert -d ./datasource-cli.ts",
     "typeorm:migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./datasource-cli.ts",
@@ -44,12 +53,13 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.17",
+    "typeorm-extension": "^3.2.0",
     "typeorm-transactional": "^0.5.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
-    "@nestjs/testing": "^9.0.0",
+    "@nestjs/testing": "^9.4.3",
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.8",
     "@types/lodash": "^4.14.202",
@@ -57,35 +67,21 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.3.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "28.1.3",
+    "jest": "29.1.1",
+    "jest-mock": "^29.7.0",
     "lint-staged": "^15.2.0",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
-    "ts-jest": "28.0.8",
+    "ts-jest": "29.1.1",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
     "typescript": "5.1.6"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
   }
 }

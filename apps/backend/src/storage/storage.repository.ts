@@ -21,4 +21,8 @@ export class StorageRepository extends Repository<StorageEntity> {
       twentyNotes: bankNotesAmount.twentyNotes,
     });
   }
+
+  getCurrent(): Promise<StorageEntity | null> {
+    return this.findOneBy({});
+  }
 }

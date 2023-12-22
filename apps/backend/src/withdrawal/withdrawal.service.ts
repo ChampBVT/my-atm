@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { chain, cloneDeep, pickBy } from 'lodash';
+import { chain, cloneDeep, pickBy, pick } from 'lodash';
 import { StorageEntity } from 'src/storage/storage.entity';
 import { StorageService } from 'src/storage/storage.service';
 import { NOTE_VALUES } from 'src/withdrawal/constant/note-value.constant';
@@ -28,47 +28,46 @@ export class WithdrawalService {
     pin: string,
     amountToWithdraw: number,
   ): Promise<typeof WithdrawPayload> {
-    const account = await this.accountService.getCurrentAccount(pin);
-
-    if (!(account instanceof Account)) {
-      return new InvalidPinError('Invalid or missing pin');
-    }
-
-    const accountBalance = account.balance;
-
-    if (amountToWithdraw > accountBalance + this.OVERDRAWN_LIMIT) {
-      return new OverdrawnError('Withdrawal amount exceeds available balance');
-    }
-
-    const storage = await this.storageService.getCurrentStorage();
-
-    const availableNoteValues = this.getAvailableNoteValues(storage);
-
-    if (availableNoteValues.length < 1) {
-      return new InsufficientNoteError('Insufficient bank notes');
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const smallestAvailableNote = availableNoteValues.at(-1)!;
-
-    if (amountToWithdraw % smallestAvailableNote[1] !== 0) {
-      return new InvalidWithdrawAmountError(
-        'Available notes cannot fulfill the withdrawal amount',
-      );
-    }
-
-    if (
-      amountToWithdraw > storage.totalValue ||
-      amountToWithdraw < smallestAvailableNote[1]
-    ) {
-      return new InsufficientNoteError('Insufficient bank notes');
-    }
-
     try {
+      const account = await this.accountService.getCurrentAccount(pin);
+
+      if (!(account instanceof Account)) {
+        return new InvalidPinError('Invalid or missing pin');
+      }
+
+      const accountBalance = account.balance;
+
+      if (amountToWithdraw > accountBalance + this.OVERDRAWN_LIMIT) {
+        return new OverdrawnError(
+          'Withdrawal amount exceeds available balance',
+        );
+      }
+
+      const storage = await this.storageService.getCurrentStorage();
+
+      const availableNoteValues = this.getAvailableNoteValues(storage);
+
+      if (availableNoteValues.length < 1) {
+        return new InsufficientNoteError('Insufficient bank notes');
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const smallestAvailableNote = availableNoteValues.at(-1)!;
+
+      if (amountToWithdraw % smallestAvailableNote[1] !== 0) {
+        return new InvalidWithdrawAmountError(
+          'Available notes cannot fulfill the withdrawal amount',
+        );
+      }
+
+      if (amountToWithdraw > storage.totalValue) {
+        return new InsufficientNoteError('Insufficient bank notes');
+      }
+
       const { withdrawNotes, updatedStorage } = this.calculateWithdrawal({
         amountToWithdraw,
         availableNoteValues,
-        storage,
+        storage: pick(storage, ['fiveNotes', 'tenNotes', 'twentyNotes']),
       });
 
       await this.storageService.updateCurrentStorageById(
@@ -87,10 +86,15 @@ export class WithdrawalService {
         return error;
       }
 
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Withdrawal Error', {
+        cause: error,
+      });
     }
   }
 
+  /**
+   * @description Calculate the most even mix of bank note for withdrawal
+   */
   calculateWithdrawal({
     availableNoteValues,
     amountToWithdraw,
@@ -98,74 +102,121 @@ export class WithdrawalService {
   }: {
     availableNoteValues: [string, number][];
     amountToWithdraw: number;
-    storage: StorageEntity;
+    storage: Pick<StorageEntity, 'fiveNotes' | 'tenNotes' | 'twentyNotes'>;
   }): {
+    // The bank notes to be withdrawn
     withdrawNotes: Pick<
       StorageEntity,
       'fiveNotes' | 'tenNotes' | 'twentyNotes'
     >;
-    updatedStorage: StorageEntity;
-  } {
-    const withdrawNotes: Pick<
+    // The updated storage after the withdrawal
+    updatedStorage: Pick<
       StorageEntity,
       'fiveNotes' | 'tenNotes' | 'twentyNotes'
-    > = {
-      fiveNotes: 0,
-      tenNotes: 0,
-      twentyNotes: 0,
-    };
+    >;
+  } {
+    // Calculate the total value of available notes
+    const totalValueOfAvailableNotes = availableNoteValues.reduce(
+      (acc, [, noteValue]) => acc + noteValue,
+      0,
+    );
 
-    const temporaryStorage = cloneDeep(storage);
-    let remainingAmountToWithdraw = amountToWithdraw;
+    // Extract the count of each available note from the storage
+    const noteCountStorageArray = Object.values(
+      pick(
+        storage,
+        availableNoteValues.map(([note]) => note),
+      ),
+    );
 
-    const canWithdrawNote = (note: string, noteValue: number): boolean => {
-      const noteStorageCount = temporaryStorage[note];
+    // Determine the maximum number of times all available notes can be withdrawn
+    const maxWithdrawAllCount = Math.min(
+      Math.floor(amountToWithdraw / totalValueOfAvailableNotes),
+      ...noteCountStorageArray,
+    );
 
-      if (remainingAmountToWithdraw === noteValue && noteStorageCount === 0) {
-        return false;
-      }
+    let currentWithdrawAllCount = maxWithdrawAllCount;
 
-      if (remainingAmountToWithdraw - noteValue < 0 || noteStorageCount === 0) {
-        return false;
-      }
+    // Iterate while there are still attempts to withdraw all available notes
+    while (currentWithdrawAllCount >= 0) {
+      const temporaryStorage = cloneDeep(storage);
 
-      if (
-        noteStorageCount === 1 &&
-        availableNoteValues
-          .filter(
-            ([key, value]) =>
-              key !== note &&
-              temporaryStorage[key] > 0 &&
-              value <= remainingAmountToWithdraw,
-          )
-          .some(
-            ([, value]) =>
-              (remainingAmountToWithdraw - noteValue) % value !== 0,
-          )
-      ) {
-        return false;
-      }
+      // Initialize the withdrawn notes with currentWithdrawAllCount offset
+      // If the note is not in availableNoteValues will initialize as 0
+      const withdrawNotes: Pick<
+        StorageEntity,
+        'fiveNotes' | 'tenNotes' | 'twentyNotes'
+      > = {
+        fiveNotes:
+          temporaryStorage['fiveNotes'] &&
+          availableNoteValues.find(([note]) => note === 'fiveNotes')
+            ? currentWithdrawAllCount
+            : 0,
+        tenNotes:
+          temporaryStorage['tenNotes'] &&
+          availableNoteValues.find(([note]) => note === 'tenNotes')
+            ? currentWithdrawAllCount
+            : 0,
+        twentyNotes:
+          temporaryStorage['twentyNotes'] &&
+          availableNoteValues.find(([note]) => note === 'twentyNotes')
+            ? currentWithdrawAllCount
+            : 0,
+      };
 
-      return true;
-    };
+      // Calculate the remaining amount to be withdrawn
+      let remainingAmountToWithdraw =
+        amountToWithdraw - totalValueOfAvailableNotes * currentWithdrawAllCount;
 
-    while (remainingAmountToWithdraw > 0) {
-      for (const [note, noteValue] of availableNoteValues) {
-        if (!canWithdrawNote(note, noteValue)) {
-          continue;
+      // Adjust the temporary storage based on the withdrawal attempt (currentWithdrawAllCount)
+      Object.entries(temporaryStorage).forEach(([note]) => {
+        if (availableNoteValues.find(([noteName]) => noteName === note)) {
+          temporaryStorage[note] =
+            temporaryStorage[note] - currentWithdrawAllCount;
         }
+      });
 
-        remainingAmountToWithdraw -= noteValue;
-        temporaryStorage[note] -= 1;
-        withdrawNotes[note] += 1;
+      // Iterate through available note values to complete the withdrawal
+      for (const [note, noteValue] of availableNoteValues) {
+        while (remainingAmountToWithdraw > 0) {
+          if (
+            temporaryStorage[note] <= 0 ||
+            remainingAmountToWithdraw - noteValue < 0
+          ) {
+            break;
+          }
+
+          remainingAmountToWithdraw -= noteValue;
+          temporaryStorage[note] -= 1;
+          withdrawNotes[note] += 1;
+        }
+      }
+
+      // If the withdrawal is not successful, decrease the currentWithdrawAllCount
+      // for more withdrawal possibility
+      if (remainingAmountToWithdraw > 0) {
+        currentWithdrawAllCount--;
+
+        // If no more attempts left, re-run the calculation without the note count causing the issue
+        if (currentWithdrawAllCount === 0) {
+          return this.calculateWithdrawal({
+            amountToWithdraw,
+            availableNoteValues: availableNoteValues.filter(
+              ([note]) => storage[note] !== maxWithdrawAllCount,
+            ),
+            storage: storage,
+          });
+        }
+      } else {
+        // Successful withdrawal, return the result
+        return { withdrawNotes, updatedStorage: temporaryStorage };
       }
     }
 
-    if (remainingAmountToWithdraw > 0) {
-      throw new InsufficientNoteError('Insufficient bank notes');
-    }
-
-    return { withdrawNotes, updatedStorage: temporaryStorage };
+    // If the loop exits without a successful withdrawal, throw an error
+    throw new InvalidWithdrawAmountError(
+      'Available notes cannot fulfill the withdrawal amount',
+    );
   }
 
   /**

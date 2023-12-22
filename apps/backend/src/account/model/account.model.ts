@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 import { AccountEntity } from 'src/account/account.entity';
 
 @ObjectType()
@@ -7,7 +7,7 @@ export class Account {
     Object.assign(this, params);
   }
 
-  @Field(() => Number)
+  @Field(() => Int)
   balance: number;
 
   @HideField()
