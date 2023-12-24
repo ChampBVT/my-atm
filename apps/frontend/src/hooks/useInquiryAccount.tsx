@@ -17,7 +17,7 @@ interface IInquiryAccountData {
 export const useInquiryAccount = () => {
   const { setAccount } = useContext(AccountContext);
 
-  const [inquiryAccount, { loading, data }] = useLazyQuery<
+  const [inquiryAccount, { loading }] = useLazyQuery<
     IInquiryAccountData,
     { pin: string }
   >(QUERY_INQUIRY_ACCOUNT, {
@@ -45,8 +45,8 @@ export const useInquiryAccount = () => {
       >,
       showSuccessToast = true,
     ) => {
-      await inquiryAccount(options);
-      if (data && 'code' in data.viewer.inquiry.account && showSuccessToast)
+      const { data } = await inquiryAccount(options);
+      if (data && !('code' in data.viewer.inquiry.account) && showSuccessToast)
         toast.success('Success!');
     },
     isInquiryAccountLoading: loading,

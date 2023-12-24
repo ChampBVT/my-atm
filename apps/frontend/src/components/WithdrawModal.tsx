@@ -71,8 +71,11 @@ export const WithdrawModal: FC<IPinModal> = ({
           }}
         >
           <div className="flex flex-row items-center justify-around w-4/6">
-            <label className="mr-4 font-bold text-2xl">Amount: </label>
+            <label className="mr-4 font-bold text-2xl" htmlFor="amount">
+              Amount:{' '}
+            </label>
             <Input
+              id="amount"
               className="w-full"
               type="number"
               value={withdrawAmount ?? ''}
@@ -155,15 +158,15 @@ export const WithdrawModal: FC<IPinModal> = ({
             <div className="flex flex-row justify-between w-2/4 mt-8 text-xl">
               <p>
                 <span className="font-bold">{`£5 `}</span>
-                {`x ${withdrawResult.withdraw.fiveNotes} `}
+                {`x ${withdrawResult.withdraw.fiveNotes}`}
               </p>
               <p>
                 <span className="font-bold">{`£10 `}</span>
-                {`x ${withdrawResult.withdraw.tenNotes} `}
+                {`x ${withdrawResult.withdraw.tenNotes}`}
               </p>
               <p>
                 <span className="font-bold">{`£20 `}</span>
-                {`x ${withdrawResult.withdraw.twentyNotes} `}
+                {`x ${withdrawResult.withdraw.twentyNotes}`}
               </p>
             </div>
             <Button

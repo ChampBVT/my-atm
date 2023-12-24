@@ -26,7 +26,7 @@ export const InputPin: FC<IInputPin> = ({ value, onChange, numInputs = 4 }) => {
             role="presentation"
             className={classNames(
               props.className,
-              '!w-40 !h-40 !text-10xl pb-6 select-none caret-transparent selection:bg-transparent',
+              '!w-40 !h-40 !text-10xl pb-6 select-none caret-transparent selection:!bg-transparent',
             )}
           />
         )}

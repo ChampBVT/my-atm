@@ -1,49 +1,45 @@
 import { Button } from '@/components/ui-kits/Button';
 import { InputPin } from '@/components/ui-kits/InputPin';
 import { Modal } from '@/components/ui-kits/Modal';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 interface IPinModal {
-  title: string;
-  inputValue: string;
-  inputOnChange: (_value: string) => void;
-  onClickButton: () => void;
-  buttonLabel: string;
+  onSubmitPin: (_pin: string) => void;
   isLoading?: boolean;
   isOpen: boolean;
   closeModal: () => void;
   openModal: () => void;
-  preventOutsideClick?: boolean;
 }
 
 export const WelcomeModal: FC<IPinModal> = ({
-  title,
-  inputValue,
-  inputOnChange,
-  onClickButton,
-  buttonLabel,
+  onSubmitPin,
   isLoading = false,
   isOpen,
   closeModal,
   openModal,
-  preventOutsideClick = false,
 }) => {
+  const [pin, setPin] = useState('');
+
   return (
     <Modal
-      title={title}
+      title="Welcome!"
       isOpen={isOpen}
       closeModal={closeModal}
       openModal={openModal}
-      preventOutsideClick={preventOutsideClick}
+      preventOutsideClick={true}
     >
-      <form autoComplete="off" className="flex flex-col items-center gap-10">
-        <InputPin value={inputValue} onChange={inputOnChange} numInputs={4} />
-        <Button
-          type="submit"
-          disabled={!(inputValue.length === 4) || isLoading}
-          onClick={onClickButton}
-        >
-          <p>{buttonLabel}</p>
+      <form
+        autoComplete="off"
+        className="flex flex-col items-center gap-10"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmitPin(pin);
+          setPin('');
+        }}
+      >
+        <InputPin value={pin} onChange={setPin} numInputs={4} />
+        <Button type="submit" disabled={!(pin.length === 4) || isLoading}>
+          <p>Continue</p>
         </Button>
       </form>
     </Modal>

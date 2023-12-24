@@ -1,5 +1,5 @@
 'use client';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { WelcomeModal } from '@/components/WelcomeModal';
 import { useInquiryAccount } from '@/hooks/useInquiryAccount';
 import { useModal } from '@/hooks/useModal';
@@ -14,7 +14,6 @@ import { WithdrawModal } from '@/components/WithdrawModal';
 
 export default function Home() {
   const accountContext = useContext(AccountContext);
-  const [pin, setPin] = useState('');
   const statsAnimationRef = useRef<DotLottieCommonPlayer>(null);
 
   const { fetchInquiryAccount, isInquiryAccountLoading } = useInquiryAccount();
@@ -110,19 +109,13 @@ export default function Home() {
         </div>
       </div>
       <WelcomeModal
-        title="Welcome!"
-        inputValue={pin}
-        inputOnChange={setPin}
-        onClickButton={() => {
+        onSubmitPin={(pin) => {
           fetchInquiryAccount({ variables: { pin } });
-          setPin('');
         }}
-        buttonLabel="Continue"
         isLoading={isInquiryAccountLoading}
         isOpen={isWelcomeModalOpen}
         openModal={openWelcomeModal}
         closeModal={closeWelcomeModal}
-        preventOutsideClick={true}
       />
       <WithdrawModal
         refetchInquiryAccount={(pin) =>

@@ -9,7 +9,7 @@ import {
 import { PropsWithChildren } from 'react';
 import { onError } from '@apollo/client/link/error';
 import { toast } from 'react-toastify';
-import { formatApolloError } from '@/app/utils/formatApolloError';
+import { formatApolloError } from '@/utils/formatApolloError';
 
 const makeClient = () => {
   const httpLink = new HttpLink({

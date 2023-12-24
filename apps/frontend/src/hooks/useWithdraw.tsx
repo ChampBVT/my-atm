@@ -9,7 +9,7 @@ interface IWithdrawData {
   withdraw: WithdrawSuccess | UserError;
 }
 
-const isWithdrawSucceed = (
+export const isWithdrawSucceed = (
   withdraw: WithdrawSuccess | UserError | undefined,
 ): withdraw is WithdrawSuccess => {
   if (!withdraw) return false;

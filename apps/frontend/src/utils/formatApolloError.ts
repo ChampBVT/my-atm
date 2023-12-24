@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import { ErrorResponse } from '@apollo/client/link/error';
+import type { ErrorResponse } from '@apollo/client/link/error';
 
 export const formatApolloError = (
   error: ApolloError | ErrorResponse,

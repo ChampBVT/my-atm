@@ -1,6 +1,5 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  collectCoverageFrom: ['**/*.ts'],
   maxWorkers: 1,
   moduleFileExtensions: ['ts', 'js', 'json'],
   moduleDirectories: ['node_modules', '<rootDir>'],
