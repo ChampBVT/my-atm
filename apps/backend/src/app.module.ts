@@ -11,6 +11,7 @@ import { WithdrawalModule } from 'src/withdrawal/withdrawal.module';
 import { StorageModule } from 'src/storage/storage.module';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
+import { HealthModule } from 'src/common/health/health.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DataSource } from 'typeorm';
     InquiryModule,
     WithdrawalModule,
     StorageModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

@@ -6,6 +6,7 @@
   "scripts": {
     "frontend": "pnpm --filter frontend",
     "backend": "pnpm --filter backend",
+    "playwright": "pnpm --filter playwright",
     "prepare": "husky install"
   },
   "keywords": [],
