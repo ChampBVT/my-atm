@@ -30,4 +30,5 @@ export default <DataSourceOptions & SeederOptions>{
   logging: loggingLevel(),
   seeds: [join(__dirname, 'seeds/**/*.seeder.{js,ts}')],
   factories: [join(__dirname, 'seeds/**/*.factories.{js,ts}')],
+  migrationsRun: process.env.ENV === 'e2e',
 };
