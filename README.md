@@ -147,3 +147,23 @@ NOTE: Sample command are meant to run from root workspace
    ```
 
 ### For additional commands please see "script" section of [package.json](./apps/playwright/package.json)
+
+## Screenshots & Recordings
+
+### Flow
+
+Going to make 3 withdrawals:
+
+- £140
+- £50
+- £90
+
+[![The ATM App](https://markdown-videos-api.jorgenkh.no/url?url=https%3A%2F%2Fyoutu.be%2FgaQ9DwkIzuA)](https://youtu.be/gaQ9DwkIzuA)
+
+### Responsive
+
+Desktop
+![Desktop](./desktop.png)
+
+Mobile
+![Mobile](./mobile.png)

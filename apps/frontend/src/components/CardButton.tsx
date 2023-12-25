@@ -29,7 +29,9 @@ export const CardButton: FC<ICardButton> = ({
       <div className="w-auto h-32">
         <DotLottiePlayer {...lottie} loop={true} autoplay={true} />
       </div>
-      <p className={classNames('font-bold text-xl', labelClassName)}>{label}</p>
+      <p className={classNames('font-bold text-sm sm:text-xl', labelClassName)}>
+        {label}
+      </p>
     </button>
   );
 };

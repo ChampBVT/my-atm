@@ -53,11 +53,11 @@ export const Modal: FC<IModal> = ({
                 <Dialog.Panel
                   as="div"
                   className={classNames(
-                    'rounded-2xl bg-gray-100 p-10 text-left align-middle shadow-xl transition-all h-full',
+                    'rounded-2xl bg-gray-100 p-8 sm:p-10 text-left align-middle shadow-xl transition-all h-full',
                     'w-full max-w-5xl transform overflow-hidden',
                   )}
                 >
-                  <h3 className="text-5xl font-bold pb-10 self-start">
+                  <h3 className="text-2xl sm:text-5xl font-bold pb-10 self-start">
                     {title}
                   </h3>
                   <div className="flex h-full justify-center items-center flex-col gap-12">

@@ -71,7 +71,10 @@ export const WithdrawModal: FC<IPinModal> = ({
           }}
         >
           <div className="flex flex-row items-center justify-around w-4/6">
-            <label className="mr-4 font-bold text-2xl" htmlFor="amount">
+            <label
+              className="mr-4 font-bold text-lg sm:text-2xl"
+              htmlFor="amount"
+            >
               Amount:{' '}
             </label>
             <Input
@@ -147,15 +150,15 @@ export const WithdrawModal: FC<IPinModal> = ({
         isWithdrawSucceed(withdrawResult.withdraw) &&
         step === 'succeed' && (
           <div className="flex w-full flex-col items-center gap-4">
-            <div className="h-40">
+            <div className="h-32 sm:h-40">
               <DotLottiePlayer
                 loop={true}
                 autoplay={true}
                 src="/assets/lotties/withdraw-success.lottie"
               />
             </div>
-            <p className="text-3xl font-semibold">Summary</p>
-            <div className="flex flex-row justify-between w-2/4 mt-8 text-xl">
+            <p className="text-2xl sm:text-3xl font-semibold">Summary</p>
+            <div className="flex flex-row justify-between sm:w-2/4 mt-8 text-xl w-full">
               <p>
                 <span className="font-bold">{`£5 `}</span>
                 {`x ${withdrawResult.withdraw.fiveNotes}`}

@@ -39,17 +39,17 @@ export default function Home() {
   }, [accountContext.account, statsAnimationRef.current]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-around p-24">
+    <main className="flex min-h-screen flex-col items-center justify-around p-6 sm:p-12">
       <div
         className={classNames(
-          'transition-all max-w-3xl w-full flex justify-center flex-col items-center gap-10',
+          'transition-all max-w-3xl w-full flex justify-center flex-col items-center gap-4',
           {
             'opacity-0': !accountContext.account,
             'opacity-100': !!accountContext.account,
           },
         )}
       >
-        <div className="w-[600px]">
+        <div className="w-[350px] sm:w-[600px] -mt-10 -mx-10">
           <DotLottiePlayer
             ref={statsAnimationRef}
             src="/assets/lotties/stats.lottie"
@@ -57,13 +57,13 @@ export default function Home() {
             autoplay={false}
           />
         </div>
-        <h1 className="text-4xl font-bold">Welcome back!</h1>
-        <p className="text-3xl font-semibold">
+        <h1 className="text-2xl sm:text-3xl font-bold">Welcome back!</h1>
+        <p className="text-xl sm:text-2xl font-semibold">
           Balance: £
           {accountContext.account?.balance.toLocaleString('en-US') ?? 0}
         </p>
 
-        <div className="grid grid-cols-2 grid-rows-2 gap-20">
+        <div className="grid grid-cols-1 grid-rows-1 sm:grid-cols-2 sm:grid-rows-2 gap-8 mt-4">
           <CardButton
             lottie={{
               src: '/assets/lotties/withdraw.lottie',
@@ -79,7 +79,9 @@ export default function Home() {
               src: '/assets/lotties/github.lottie',
               className: 'rounded-full bg-white',
             }}
-            onClick={() => window.open('https://github.com', '_blank')}
+            onClick={() =>
+              window.open('https://github.com/ChampBVT/my-atm', '_blank')
+            }
             buttonClassName="bg-black"
             label="Github"
             labelClassName="text-white"
@@ -89,7 +91,12 @@ export default function Home() {
               src: '/assets/lotties/testing.lottie',
               className: '!h-40 -mt-2',
             }}
-            onClick={() => window.open('https://github.com', '_blank')}
+            onClick={() =>
+              window.open(
+                'https://github.com/ChampBVT/my-atm/actions/runs/7321455764',
+                '_blank',
+              )
+            }
             buttonClassName="bg-lime-300"
             label="Testings"
             labelClassName="text-black"

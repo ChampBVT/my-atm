@@ -12,7 +12,7 @@ interface IInputPin {
 export const InputPin: FC<IInputPin> = ({ value, onChange, numInputs = 4 }) => {
   return (
     <div className="flex flex-col items-center">
-      <h4 className="text-3xl font-bold">Enter your PIN</h4>
+      <h4 className="text-xl sm:text-3xl font-bold">Enter your PIN</h4>
       <OtpInput
         value={value}
         onChange={onChange}
@@ -26,7 +26,7 @@ export const InputPin: FC<IInputPin> = ({ value, onChange, numInputs = 4 }) => {
             role="presentation"
             className={classNames(
               props.className,
-              '!w-40 !h-40 !text-10xl pb-6 select-none caret-transparent selection:!bg-transparent',
+              '!w-10 !h-10 sm:!w-40 sm:!h-40 !text-3xl sm:!text-10xl pb-1 sm:pb-6 select-none caret-transparent selection:!bg-transparent',
             )}
           />
         )}

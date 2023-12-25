@@ -33,7 +33,7 @@ export const Button: FC<IButton> = ({
     <button
       className={classNames(
         className,
-        'rounded-lg min-w-[8rem] py-3 px-6 font-sans text-md font-bold transition-all shadow-xl',
+        'rounded-lg min-w-[6rem] sm:min-w-[8rem] py-3 px-4 sm:px-6 font-sans text-xs sm:text-sm font-bold transition-all shadow-xl',
         'active:opacity-[0.85] active:shadow-none hover:shadow-lg',
         'focus:opacity-[0.85] focus:shadow-none',
         'disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none',
