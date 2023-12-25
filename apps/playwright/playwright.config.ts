@@ -73,12 +73,12 @@ export default defineConfig({
     {
       command: 'pnpm --filter frontend start',
       url: 'http://127.0.0.1:3000',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
     {
       command: 'pnpm --filter backend start:prod',
       url: 'http://127.0.0.1:4000/health',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
     },
   ],
 });
