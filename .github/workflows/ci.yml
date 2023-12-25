@@ -31,6 +31,8 @@ jobs:
       - name: Unit test backend
         run: pnpm frontend test:unit:cov
       - name: E2E test backend
+        env:
+          ENV: e2e
         run: pnpm frontend test:e2e:cov
 
   test-frontend:
