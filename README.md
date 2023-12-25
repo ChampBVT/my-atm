@@ -113,7 +113,7 @@ NOTE: Sample command are meant to run from root workspace
    pnpm frontend dev
 
    # production mode
-   pnpm backend start
+   pnpm frontend start
    ```
 
 2. Test
