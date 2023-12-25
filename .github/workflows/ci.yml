@@ -8,7 +8,7 @@ jobs:
   test-backend:
     services:
       postgres:
-        image: postgres:13
+        image: postgres:16-alpine
         ports:
           - 5432:5432
         env:
@@ -29,11 +29,11 @@ jobs:
           chmod +x ./setup.sh
           ./setup.sh
       - name: Unit test backend
-        run: pnpm frontend test:unit:cov
+        run: pnpm backend test:unit:cov
       - name: E2E test backend
         env:
           ENV: e2e
-        run: pnpm frontend test:e2e:cov
+        run: pnpm backend test:e2e:cov
 
   test-frontend:
     timeout-minutes: 60
@@ -53,6 +53,15 @@ jobs:
         run: pnpm frontend test
 
   playwright:
+    services:
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: my-atm
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
     needs: [test-frontend, test-backend]
     timeout-minutes: 60
     runs-on: ubuntu-latest
@@ -70,7 +79,11 @@ jobs:
       - name: Build frontend
         run: pnpm frontend build
       - name: Build backend
-        run: pnpm frontend build
+        run: pnpm backend build
+      - name: Run migration backend
+        run: pnpm backend typeorm:migration:run
+      - name: Run seed backend
+        run: pnpm backend seed
       - name: Run Playwright tests
         run: pnpm playwright test
       - uses: actions/upload-artifact@v3
